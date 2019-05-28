@@ -23,13 +23,19 @@ C:\path\to\app> PATH\venv\Script\activate.bat
 $ source /venv/bin/activate
 ```
 
-3. install all the dependencies (one by one) that use the project i.e. Flask, Flask-Restful, Flask-SQLAlchemy and Flask-JWT.
+3. Install all the dependencies (one by one) that use the project i.e. Flask, Flask-Restful, Flask-SQLAlchemy and Flask-JWT.
 
 ```bash
 pip install flask
 pip install flask-restful
 pip install flask-jwt
 pip install flask-sqlalchemy
+```
+
+If you have the requirements.txt file must be execute the command
+
+```bash
+pip install -r requirements.txt
 ```
 
 ## Run project
@@ -39,11 +45,13 @@ You must type this command to execute the project
 * For Windows (CMD)
 ```bash
 C:\path\to\app>set FLASK_APP=app.py
+C:\path\to\app>flask run
 ```
 
 * For Windows (Powershell)
 ```bash
 PS C:\path\to\app> $env:FLASK_APP = "app.py"
+PS C:\path\to\app> flask run
 ```
 
 * For Mac
