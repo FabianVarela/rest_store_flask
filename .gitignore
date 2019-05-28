@@ -134,5 +134,6 @@ dmypy.json
 # Other extensions
 .DS_Store
 .vscode/
+*.db
 
 # End of https://www.gitignore.io/api/flask
