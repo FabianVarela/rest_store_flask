@@ -23,13 +23,14 @@ C:\path\to\app> PATH\venv\Script\activate.bat
 $ source /venv/bin/activate
 ```
 
-3. Install all the dependencies (one by one) that use the project i.e. Flask, Flask-Restful, Flask-SQLAlchemy and Flask-JWT.
+3. Install all the dependencies (one by one) that use the project i.e. Flask, Flask-Restful, Flask-RESTful-Swagger, Flask-SQLAlchemy and Flask-JWT.
 
 ```bash
 pip install flask
 pip install flask-restful
 pip install flask-jwt
 pip install flask-sqlalchemy
+pip install flask-restful-swagger
 ```
 
 If you have the requirements.txt file must be execute the command
