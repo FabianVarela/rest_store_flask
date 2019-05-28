@@ -3,13 +3,14 @@ import os
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt import JWT, jwt_required, timedelta
+from flask_restful_swagger import swagger
 
 from security.security import authenticate, identity
 from resources.user import UserRegister
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 app.secret_key = "fabian"
 
 # JWT Configurations
@@ -22,7 +23,14 @@ app.config["JWT_AUTH_HEADER_PREFIX"] = "Bearer" # Change prefix default JWT
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///data.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-api = Api(app)
+#api = Api(app)
+
+###################################
+# Wrap the Api with swagger.docs.
+api = swagger.docs(Api(app), apiVersion='0.1', api_spec_url='/api/spec', description='REST API store')
+###################################
+
+#JWT
 jwt = JWT(app, authenticate, identity)
 
 @jwt.auth_response_handler
