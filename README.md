@@ -45,19 +45,19 @@ You must type this command to execute the project
 
 * For Windows (CMD)
 ```bash
-C:\path\to\app>set FLASK_APP=app.py
+C:\path\to\app>set FLASK_APP=run.py
 C:\path\to\app>flask run
 ```
 
 * For Windows (Powershell)
 ```bash
-PS C:\path\to\app> $env:FLASK_APP = "app.py"
+PS C:\path\to\app> $env:FLASK_APP = "run.py"
 PS C:\path\to\app> flask run
 ```
 
 * For Mac
 ```bash
-$ export FLASK_APP=app.py
+$ export FLASK_APP=run.py
 $ flask run
 ```
 
