@@ -31,12 +31,25 @@ pip install flask-restful
 pip install flask-jwt
 pip install flask-sqlalchemy
 pip install flask-restful-swagger
+pip install psycopg2
 ```
 
 If you have the requirements.txt file must be execute the command
 
 ```bash
 pip install -r requirements.txt
+```
+
+if you appear an error installing the psycopg2 package, you must type the command below.
+
+* For Mac
+```bash
+brew install postgresql
+```
+
+* For linux
+```bash
+sudo yum install postgresql-devel
 ```
 
 ## Run project
