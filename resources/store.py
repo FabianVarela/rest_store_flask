@@ -45,4 +45,4 @@ class StoreList(Resource):
 
     @classmethod
     def get_all(cls):
-        return StoreModel.query.all()
+        return StoreModel.find_all()
