@@ -3,10 +3,10 @@ import os
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt import JWT, jwt_required, timedelta
+from flask_jwt_extended import JWTManager
 from flask_restful_swagger import swagger
 
-from security.security import authenticate, identity
-from resources.user import UserRegister, User
+from resources.user import UserRegister, User, UserLogin
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 
@@ -14,11 +14,8 @@ app = Flask(__name__, static_folder="static")
 app.secret_key = "fabian"
 
 # JWT Configurations
-app.config["JWT_AUTH_URL_RULE"] = "/login" # Change endpint url
-app.config["JWT_EXPIRATION_DELTA"] = timedelta(seconds=1800) # Change expration time
-app.config["JWT_AUTH_USERNAME_KEY"] = "email" # Change username key
-app.config["JWT_AUTH_HEADER_PREFIX"] = "Bearer" # Change prefix default JWT 
-app.config["PROPAGATE_EXCEPTIONS"] = True
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=1800) # Change expration time
+app.config["JWT_HEADER_TYPE"] = "Bearer" # Change prefix, default JWT 
 
 #SQL Alchemy Configurations
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///data.db")
@@ -32,21 +29,7 @@ api = swagger.docs(Api(app), apiVersion='0.1', api_spec_url='/api/spec', descrip
 ###################################
 
 #JWT
-jwt = JWT(app, authenticate, identity)
-
-@jwt.auth_response_handler
-def custom_response_jwt(access_token, identity):
-    return jsonify({
-        "access_token": access_token.decode("utf-8"),
-        "user_id": identity.id
-    })
-
-@jwt.jwt_error_handler
-def custom_error_response_jwt(error):
-    return jsonify({
-        "message": error.description,
-        "code": error.status_code
-    }), error.status_code
+jwt = JWTManager(app)
 
 # Add resources or routes
 api.add_resource(Store, "/store/<string:name>")
@@ -55,6 +38,7 @@ api.add_resource(Item, "/item/<string:name>")
 api.add_resource(ItemList, "/items")
 api.add_resource(UserRegister, "/register")
 api.add_resource(User, "/user/<int:user_id>")
+api.add_resource(UserLogin, "/login")
 
 if __name__ == "__main__":
     from db import db
