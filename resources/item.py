@@ -76,4 +76,4 @@ class ItemList(Resource):
     # Class methods
     @classmethod
     def get_all(cls):
-        return ItemModel.query.all()
+        return ItemModel.find_all()
