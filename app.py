@@ -18,6 +18,7 @@ app.config["JWT_AUTH_URL_RULE"] = "/login" # Change endpint url
 app.config["JWT_EXPIRATION_DELTA"] = timedelta(seconds=1800) # Change expration time
 app.config["JWT_AUTH_USERNAME_KEY"] = "email" # Change username key
 app.config["JWT_AUTH_HEADER_PREFIX"] = "Bearer" # Change prefix default JWT 
+app.config["PROPAGATE_EXCEPTIONS"] = True
 
 #SQL Alchemy Configurations
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///data.db")
