@@ -2,9 +2,9 @@ import os
 
 from flask import Flask, jsonify
 from flask_restful import Api
-from flask_jwt import JWT, jwt_required, timedelta
 from flask_jwt_extended import JWTManager
 from flask_restful_swagger import swagger
+from datetime import timedelta
 
 from resources.user import UserRegister, User, UserLogin
 from resources.item import Item, ItemList
