@@ -16,6 +16,7 @@ app.secret_key = "fabian"
 # JWT Configurations
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=1800) # Change expration time
 app.config["JWT_HEADER_TYPE"] = "Bearer" # Change prefix, default JWT 
+app.config['PROPAGATE_EXCEPTIONS'] = True # Propagate exception
 
 #SQL Alchemy Configurations
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///data.db")
@@ -30,6 +31,13 @@ api = swagger.docs(Api(app), apiVersion='0.1', api_spec_url='/api/spec', descrip
 
 #JWT
 jwt = JWTManager(app)
+
+@jwt.user_claims_loader
+def add_claims_to_jwt(identity):
+    if identity == 1: # Cane be replaced by other configuration
+        return {"is_admin": True}
+    
+    return {"is_admin": False}
 
 # Add resources or routes
 api.add_resource(Store, "/store/<string:name>")

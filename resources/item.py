@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_claims, jwt_optional, get_jwt_identity
 from models.item import ItemModel
 
 class Item(Resource):
@@ -58,6 +58,11 @@ class Item(Resource):
 
     @jwt_required
     def delete(self, name):
+        claims = get_jwt_claims()
+
+        if not claims["is_admin"]:
+            return {"message", "Admin privilege required"}, 401
+
         item = ItemModel.find_by_name(name)
 
         if item:
@@ -68,10 +73,18 @@ class Item(Resource):
 
 class ItemList(Resource):
     # Route methods HTTP
-    @jwt_required
+    @jwt_optional
     def get(self):
-        result_items = self.get_all()
-        return {"items": [item.json() for item in result_items]}
+        user_id = get_jwt_identity()
+        result_items = [item.json() for item in self.get_all()]
+
+        if user_id:
+            return {"items": result_items}, 200
+
+        return {
+            "items": [item["name"] for item in result_items],
+            "message": "More data available if you log in"
+        }, 200
 
     # Class methods
     @classmethod
