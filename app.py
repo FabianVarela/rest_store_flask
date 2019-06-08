@@ -6,9 +6,16 @@ from flask_jwt_extended import JWTManager
 from flask_restful_swagger import swagger
 from datetime import timedelta
 
-from resources.user import UserRegister, User, UserLogin, TokenRefresh
+from resources.user import (
+    UserRegister,
+    User,
+    UserLogin,
+    TokenRefresh,
+    UserLogout
+)
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
+from blacklist import BLACKLIST
 
 app = Flask(__name__, static_folder="static")
 app.secret_key = "fabian"
@@ -16,7 +23,9 @@ app.secret_key = "fabian"
 # JWT Configurations
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=1800) # Change expration time
 app.config["JWT_HEADER_TYPE"] = "Bearer" # Change prefix, default JWT 
-app.config['PROPAGATE_EXCEPTIONS'] = True # Propagate exception
+app.config["PROPAGATE_EXCEPTIONS"] = True # Propagate exception
+app.config["JWT_BLACKLIST_ENABLED"] = True
+app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = ["access", "refresh"]
 
 #SQL Alchemy Configurations
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///data.db")
@@ -40,6 +49,11 @@ def add_claims_to_jwt(identity):
     
     return {"is_admin": False}
 
+# Check if a JTI is in the blacklist
+@jwt.token_in_blacklist_loader
+def check_if_token_if_blacklist(decrypted_token):
+    return decrypted_token["jti"] in BLACKLIST
+
 # Message when the token has expired
 @jwt.expired_token_loader
 def expired_token_callback():
@@ -57,7 +71,7 @@ def invalid_token_callback(error):
     }), 401
 
 # Message when the request does not send the token
-@jwt.unathorized_loader
+@jwt.unauthorized_loader
 def missing_token_callback(error):
     return jsonify({
         "description": "Request doesn't containt an access token",
@@ -88,6 +102,7 @@ api.add_resource(ItemList, "/items")
 api.add_resource(UserRegister, "/register")
 api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(UserLogin, "/login")
+api.add_resource(UserLogout, "/logout")
 api.add_resource(TokenRefresh, "/refresh")
 
 if __name__ == "__main__":

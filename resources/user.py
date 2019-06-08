@@ -1,13 +1,16 @@
-from flask_restful import Resource, reqparse
-from models.user import UserModel
-from flask_restful_swagger import swagger
 from werkzeug.security import safe_str_cmp
+from flask_restful import Resource, reqparse
+from flask_restful_swagger import swagger
 from flask_jwt_extended import (
   create_access_token,
   create_refresh_token,
   jwt_refresh_token_required,
-  get_jwt_identity
+  get_jwt_identity,
+  jwt_required,
+  get_raw_jwt
 )
+from models.user import UserModel
+from blacklist import BLACKLIST
 
 # Parser data
 _user_parser = reqparse.RequestParser()
@@ -95,6 +98,14 @@ class UserLogin(Resource):
       }, 200
 
     return {"message": "Invalid credentials"}, 401
+
+class UserLogout(Resource):
+  @jwt_required
+  def post(self):
+    jti = get_raw_jwt()["jti"] #JTI = JWT ID unique identifier
+    BLACKLIST.add(jti)
+
+    return {"message": "Successfully logged out"}, 200
 
 class TokenRefresh(Resource):
   @jwt_refresh_token_required
